@@ -60,7 +60,7 @@ submit_cran()
 
 ## Philosophy
 
-Part of the [tinyverse](https://www.tinyverse.org) toolchain. Only dependency is `curl` (for CRAN/win-builder uploads).
+Follows [tinyverse](https://www.tinyverse.org) principles. Only dependency is `curl` (for CRAN/win-builder uploads).
 
 ## License
 
