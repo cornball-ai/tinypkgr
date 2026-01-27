@@ -1,0 +1,14 @@
+Package: tinypkgr
+Title: Minimal R Package Development Utilities
+Version: 0.1.0
+Authors@R:
+    person("Troy", "Hernandez", email = "troy@cornball.ai", role = c("aut", "cre"))
+Description: Lightweight wrappers around R CMD INSTALL, R CMD check, and
+    CRAN submission utilities. Base R only, minimal dependencies.
+License: GPL-3
+Encoding: UTF-8
+Imports:
+    curl
+Suggests:
+    tinyrox,
+    tinytest
