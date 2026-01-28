@@ -11,7 +11,8 @@ writeLines(c(
   "Package: testpkg",
   "Title: Test Package",
   "Version: 0.0.1",
-  "Description: Test.",
+  "Authors@R: person('Test', 'Person', email = 'test@example.com', role = c('aut', 'cre'))",
+  "Description: A test package for tinypkgr unit tests.",
   "License: MIT"
 ), file.path(tmp_pkg, "DESCRIPTION"))
 
