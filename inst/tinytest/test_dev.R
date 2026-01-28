@@ -19,9 +19,11 @@ writeLines(c(
 writeLines("add <- function(x, y) x + y", file.path(tmp_pkg, "R", "add.R"))
 writeLines("export(add)", file.path(tmp_pkg, "NAMESPACE"))
 
-# Test quiet install
-result <- tinypkgr::install(tmp_pkg, quiet = TRUE)
-expect_true(result)
+# Test quiet install (skip in CI - needs writable library)
+if (at_home()) {
+  result <- tinypkgr::install(tmp_pkg, quiet = TRUE)
+  expect_true(result)
+}
 
 # Test load_all
 files <- tinypkgr::load_all(tmp_pkg, quiet = TRUE)
