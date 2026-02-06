@@ -6,6 +6,8 @@ Authors@R:
 Description: Lightweight wrappers around R CMD INSTALL, R CMD check, and
     CRAN submission utilities. Base R only, minimal dependencies.
 License: GPL-3
+URL: https://github.com/cornball-ai/tinypkgr
+BugReports: https://github.com/cornball-ai/tinypkgr/issues
 Encoding: UTF-8
 Imports:
     curl
