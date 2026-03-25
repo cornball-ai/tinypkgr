@@ -2,9 +2,10 @@ Package: tinypkgr
 Title: Minimal R Package Development Utilities
 Version: 0.1.0
 Authors@R:
-    person("Troy", "Hernandez", email = "troy@cornball.ai", role = c("aut", "cre"))
+    person("Troy", "Hernandez", email = "troy@cornball.ai", role = c("aut", "cre"),
+           comment = c(ORCID = "0009-0005-4248-604X"))
 Description: Lightweight wrappers around R CMD INSTALL, R CMD check, and
-    CRAN submission utilities. Base R only, minimal dependencies.
+    CRAN submission utilities. Minimal dependencies.
 License: GPL-3
 URL: https://github.com/cornball-ai/tinypkgr
 BugReports: https://github.com/cornball-ai/tinypkgr/issues
