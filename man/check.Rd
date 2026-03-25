@@ -3,11 +3,8 @@
 \alias{check}
 \title{Check Package}
 \usage{
-check(
-  path = ".",
-  args = c("--as-cran", "--no-manual"),
-  error_on = c("warning", "error", "note")
-)
+check(path = ".", args = c("--as-cran", "--no-manual"),
+      error_on = c("warning", "error", "note"))
 }
 \arguments{
 \item{path}{Path to package root directory.}
