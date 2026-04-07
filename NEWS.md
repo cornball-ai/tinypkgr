@@ -2,6 +2,7 @@
 
 * New `create_package()` for scaffolding a tinyverse-flavored R package: DESCRIPTION with Authors@R, NAMESPACE, .Rbuildignore, NEWS.md, tests/tinytest.R entry point, and an optional starter `hello()` function with matching tinytest test.
 * New `use_version()` bumps the DESCRIPTION Version field and prepends a matching NEWS.md section header. Supports `patch`, `minor`, `major`, and `dev` bumps.
+* New `use_github_action()` writes a `.github/workflows/ci.yaml` from the r-ci template (Ubuntu + macOS) and adds `^\.github$` to `.Rbuildignore`.
 
 # tinypkgr 0.1.0
 

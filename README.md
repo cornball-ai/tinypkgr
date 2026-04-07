@@ -60,6 +60,7 @@ submit_cran()
 |----------|---------|
 | `create_package()` | Scaffold a new tinyverse-flavored package |
 | `use_version()` | Bump DESCRIPTION version + NEWS.md header |
+| `use_github_action()` | Write `.github/workflows/ci.yaml` (r-ci) |
 | `install()` | R CMD INSTALL wrapper |
 | `load_all()` | Source R/ files for dev |
 | `reload()` | Reinstall and reload |

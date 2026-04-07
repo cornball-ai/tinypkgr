@@ -56,6 +56,86 @@ use_version <- function(which = c("patch", "minor", "major", "dev"),
     invisible(new_version)
 }
 
+#' Add a GitHub Actions CI Workflow
+#'
+#' Writes `.github/workflows/ci.yaml` using the r-ci template (Ubuntu and
+#' macOS, via `eddelbuettel/github-actions/r-ci@master`). Adds `^\.github$`
+#' to `.Rbuildignore` if not already present.
+#'
+#' @param path Path to package root directory.
+#'
+#' @return Path to the created YAML file (invisibly).
+#'
+#' @export
+#'
+#' @examples
+#' \donttest{
+#' tmp <- tempfile("tinypkgr_use_")
+#' dir.create(tmp)
+#' create_package("foo", path = tmp,
+#'                author = "First Last", email = "f@example.com")
+#' use_github_action(path = file.path(tmp, "foo"))
+#' unlink(tmp, recursive = TRUE)
+#' }
+use_github_action <- function(path = ".") {
+    path <- normalizePath(path, mustWork = TRUE)
+    workflows_dir <- file.path(path, ".github", "workflows")
+    dir.create(workflows_dir, recursive = TRUE, showWarnings = FALSE)
+    yaml_file <- file.path(workflows_dir, "ci.yaml")
+    if (file.exists(yaml_file)) {
+        stop("File already exists: ", yaml_file, call. = FALSE)
+    }
+
+    yaml_lines <- c(
+                    "name: ci",
+                    "",
+                    "on:",
+                    "  push:",
+                    "  pull_request:",
+                    "",
+                    "env:",
+                    "  _R_CHECK_FORCE_SUGGESTS_: \"false\"",
+                    "",
+                    "jobs:",
+                    "  ci:",
+                    "    strategy:",
+                    "      matrix:",
+                    "        include:",
+                    "          - {os: macos-latest}",
+                    "          - {os: ubuntu-latest}",
+                    "",
+                    "    runs-on: ${{ matrix.os }}",
+                    "",
+                    "    steps:",
+                    "      - uses: actions/checkout@v6",
+                    "",
+                    "      - name: Setup",
+                    "        uses: eddelbuettel/github-actions/r-ci@master",
+                    "",
+                    "      - name: Dependencies",
+                    "        run: ./run.sh install_deps",
+                    "",
+                    "      - name: Test",
+                    "        run: ./run.sh run_tests"
+    )
+    writeLines(yaml_lines, yaml_file)
+    message("Created ", yaml_file)
+
+    # Make sure .github is in .Rbuildignore
+    rbi <- file.path(path, ".Rbuildignore")
+    rbi_entry <- "^\\.github$"
+    if (file.exists(rbi)) {
+        lines <- readLines(rbi, warn = FALSE)
+        if (!rbi_entry %in% lines) {
+            writeLines(c(lines, rbi_entry), rbi)
+        }
+    } else {
+        writeLines(rbi_entry, rbi)
+    }
+
+    invisible(yaml_file)
+}
+
 # Bump a version string by component.
 bump_version <- function(current, which) {
     parts <- strsplit(current, ".", fixed = TRUE)[[1]]
