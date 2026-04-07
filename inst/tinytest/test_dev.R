@@ -25,15 +25,19 @@ if (at_home()) {
   expect_true(result)
 }
 
-# Test load_all
-files <- tinypkgr::load_all(tmp_pkg, quiet = TRUE)
-expect_equal(length(files), 1)
-expect_true(any(grepl("tinypkgr:testpkg", search())))
+# load_all returns an environment populated with sourced functions,
+# without touching the search path.
+e <- tinypkgr::load_all(tmp_pkg, quiet = TRUE)
+expect_true(is.environment(e))
+expect_true("add" %in% ls(e))
+expect_equal(e$add(2, 3), 5)
+expect_false(any(grepl("testpkg", search())))
 
-# Clean up search path
-if ("tinypkgr:testpkg" %in% search()) {
-  detach("tinypkgr:testpkg", character.only = TRUE)
-}
+# Caller may supply their own env
+target <- new.env()
+e2 <- tinypkgr::load_all(tmp_pkg, env = target, quiet = TRUE)
+expect_identical(e2, target)
+expect_true("add" %in% ls(target))
 
 # Clean up temp package
 unlink(tmp_pkg, recursive = TRUE)

@@ -163,18 +163,29 @@ install <- function(path = ".", quiet = TRUE) {
 #' without requiring a full install.
 #'
 #' @param path Path to package root directory.
+#' @param env Environment to source files into. Defaults to a fresh
+#'   environment whose parent is the global environment.
 #' @param quiet Logical. Suppress file sourcing messages? Default TRUE.
 #'
-#' @return Character vector of sourced files (invisibly).
+#' @return The environment into which files were sourced (invisibly).
+#'   Does not modify the search path. If you want search-path behavior,
+#'   call `attach()` yourself:
+#'   \preformatted{attach(tinypkgr::load_all(), name = "tinypkgr:mypkg")}
+#'
+#' @seealso \code{\link[pkgKitten]{kitten}} for scaffolding a new package.
 #'
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' load_all()
-#' load_all(quiet = FALSE)  # Show each file being sourced
+#' e <- load_all()
+#' e$my_function(123)
+#'
+#' # Or attach to the search path explicitly:
+#' attach(load_all(), name = "tinypkgr:mypkg")
 #' }
-load_all <- function(path = ".", quiet = TRUE) {
+load_all <- function(path = ".", env = new.env(parent = globalenv()),
+                     quiet = TRUE) {
     r_dir <- file.path(path, "R")
 
     if (!dir.exists(r_dir)) {
@@ -185,32 +196,18 @@ load_all <- function(path = ".", quiet = TRUE) {
 
     if (length(r_files) == 0) {
         message("No R files found.")
-        return(invisible(character()))
+        return(invisible(env))
     }
-
-    # Create a new environment attached to the search path
-    pkg_env <- new.env(parent = globalenv())
 
     for (f in r_files) {
         if (!quiet) {
             message("Sourcing ", basename(f))
         }
-        source(f, local = pkg_env)
+        source(f, local = env)
     }
 
-    # Attach the environment
-    # Use a name that won't conflict
-    env_name <- paste0("tinypkgr:", basename(normalizePath(path)))
-
-    # Detach if already attached
-    if (env_name %in% search()) {
-        detach(env_name, character.only = TRUE)
-    }
-
-    attach(pkg_env, name = env_name)
-
-    message("Loaded ", length(r_files), " file(s) as '", env_name, "'")
-    invisible(r_files)
+    message("Loaded ", length(r_files), " file(s)")
+    invisible(env)
 }
 
 #' Reload an Installed Package
