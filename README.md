@@ -59,6 +59,7 @@ submit_cran()
 | Function | Purpose |
 |----------|---------|
 | `create_package()` | Scaffold a new tinyverse-flavored package |
+| `use_version()` | Bump DESCRIPTION version + NEWS.md header |
 | `install()` | R CMD INSTALL wrapper |
 | `load_all()` | Source R/ files for dev |
 | `reload()` | Reinstall and reload |

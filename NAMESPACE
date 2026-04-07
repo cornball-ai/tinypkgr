@@ -9,6 +9,7 @@ export(load_all)
 export(maintainer)
 export(reload)
 export(submit_cran)
+export(use_version)
 
 importFrom(curl,curl_fetch_memory)
 importFrom(curl,curl_upload)
