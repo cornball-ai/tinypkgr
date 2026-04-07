@@ -3,6 +3,7 @@
 export(build)
 export(check)
 export(check_win_devel)
+export(create_package)
 export(install)
 export(load_all)
 export(maintainer)

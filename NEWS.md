@@ -1,3 +1,7 @@
+# tinypkgr 0.2.0
+
+* New `create_package()` for scaffolding a tinyverse-flavored R package: DESCRIPTION with Authors@R, NAMESPACE, .Rbuildignore, NEWS.md, tests/tinytest.R entry point, and an optional starter `hello()` function with matching tinytest test.
+
 # tinypkgr 0.1.0
 
 * Initial CRAN release.

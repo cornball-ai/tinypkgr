@@ -14,6 +14,15 @@ remotes::install_github("cornball-ai/tinypkgr")
 
 ## Usage
 
+### Create a package
+
+```r
+tinypkgr::create_package("mypkg",
+                         author = "First Last",
+                         email = "you@example.com",
+                         orcid = "0000-0000-0000-0000")
+```
+
 ### Development
 
 ```r
@@ -49,6 +58,7 @@ submit_cran()
 
 | Function | Purpose |
 |----------|---------|
+| `create_package()` | Scaffold a new tinyverse-flavored package |
 | `install()` | R CMD INSTALL wrapper |
 | `load_all()` | Source R/ files for dev |
 | `reload()` | Reinstall and reload |
