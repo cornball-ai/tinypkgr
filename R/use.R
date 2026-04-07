@@ -5,7 +5,7 @@
 #'
 #' @param which Which component to bump: "patch" (0.2.0 -> 0.2.1),
 #'   "minor" (0.2.0 -> 0.3.0), "major" (0.2.0 -> 1.0.0), or
-#'   "dev" (0.2.0 -> 0.2.0.9000, or 0.2.0.9000 -> 0.2.0.9001).
+#'   "dev" (0.2.0 -> 0.2.0.1, or 0.2.0.1 -> 0.2.0.2).
 #' @param path Path to package root directory.
 #'
 #' @return The new version string (invisibly).
@@ -13,13 +13,9 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
-#' tmp <- tempfile("tinypkgr_use_")
-#' dir.create(tmp)
-#' create_package("foo", path = tmp,
-#'                author = "First Last", email = "f@example.com")
-#' use_version("patch", path = file.path(tmp, "foo"))
-#' unlink(tmp, recursive = TRUE)
+#' \dontrun{
+#' use_version("patch")
+#' use_version("dev")
 #' }
 use_version <- function(which = c("patch", "minor", "major", "dev"),
                         path = ".") {
@@ -69,13 +65,8 @@ use_version <- function(which = c("patch", "minor", "major", "dev"),
 #' @export
 #'
 #' @examples
-#' \donttest{
-#' tmp <- tempfile("tinypkgr_use_")
-#' dir.create(tmp)
-#' create_package("foo", path = tmp,
-#'                author = "First Last", email = "f@example.com")
-#' use_github_action(path = file.path(tmp, "foo"))
-#' unlink(tmp, recursive = TRUE)
+#' \dontrun{
+#' use_github_action()
 #' }
 use_github_action <- function(path = ".") {
     path <- normalizePath(path, mustWork = TRUE)
@@ -143,7 +134,7 @@ bump_version <- function(current, which) {
         if (length(parts) == 4) {
             parts[4] <- as.character(as.integer(parts[4]) + 1)
         } else if (length(parts) == 3) {
-            parts <- c(parts, "9000")
+            parts <- c(parts, "1")
         } else {
             stop("Cannot bump dev version from: ", current, call. = FALSE)
         }

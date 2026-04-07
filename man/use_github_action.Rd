@@ -17,12 +17,7 @@ macOS, via `eddelbuettel/github-actions/r-ci@master`). Adds `^\.github$`
 to `.Rbuildignore` if not already present.
 }
 \examples{
-\donttest{
-tmp <- tempfile("tinypkgr_use_")
-dir.create(tmp)
-create_package("foo", path = tmp,
-               author = "First Last", email = "f@example.com")
-use_github_action(path = file.path(tmp, "foo"))
-unlink(tmp, recursive = TRUE)
+\dontrun{
+use_github_action()
 }
 }

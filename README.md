@@ -14,13 +14,10 @@ remotes::install_github("cornball-ai/tinypkgr")
 
 ## Usage
 
-### Create a package
+For creating a new package skeleton, use [pkgKitten](https://github.com/eddelbuettel/pkgkitten):
 
 ```r
-tinypkgr::create_package("mypkg",
-                         author = "First Last",
-                         email = "you@example.com",
-                         orcid = "0000-0000-0000-0000")
+pkgKitten::kitten("mypkg")
 ```
 
 ### Development
@@ -58,7 +55,6 @@ submit_cran()
 
 | Function | Purpose |
 |----------|---------|
-| `create_package()` | Scaffold a new tinyverse-flavored package |
 | `use_version()` | Bump DESCRIPTION version + NEWS.md header |
 | `use_github_action()` | Write `.github/workflows/ci.yaml` (r-ci) |
 | `install()` | R CMD INSTALL wrapper |
