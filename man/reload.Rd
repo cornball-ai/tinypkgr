@@ -21,8 +21,12 @@ Unloads a package if loaded, reinstalls it, and loads it again.
 Convenience function for the install-reload cycle during development.
 }
 \examples{
-\dontrun{
-reload()  # Reinstall and reload current package
-reload(document = TRUE)  # Document first (requires tinyrox)
+# Calls install() under the hood, which writes to the user's R
+# library. Wrapped in if(interactive()) so checks never mutate it.
+\donttest{
+if (interactive()) {
+  reload()
+  reload(document = TRUE)
+}
 }
 }

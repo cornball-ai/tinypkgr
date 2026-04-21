@@ -15,7 +15,20 @@ A list with elements `name` and `email`.
 Extracts maintainer name and email from DESCRIPTION.
 }
 \examples{
-\dontrun{
-maintainer()
-}
+# Scaffold a throwaway package in tempdir() and read its maintainer.
+pkg <- file.path(tempdir(), "mxpkg")
+dir.create(pkg, showWarnings = FALSE)
+writeLines(c(
+  "Package: mxpkg",
+  "Title: Example",
+  "Version: 0.0.1",
+  "Authors@R: person('Jane', 'Doe', email = 'jane@example.com',",
+  "                  role = c('aut','cre'))",
+  "Description: Example.",
+  "License: GPL-3"
+), file.path(pkg, "DESCRIPTION"))
+
+maintainer(pkg)
+
+unlink(pkg, recursive = TRUE)
 }

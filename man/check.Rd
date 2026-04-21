@@ -23,9 +23,15 @@ TRUE if check passes, FALSE otherwise (invisibly).
 Runs R CMD build and R CMD check on the package.
 }
 \examples{
-\dontrun{
-check()
-check(error_on = "error")  # Only fail on errors, not warnings
-check(args = c("--as-cran", "--no-manual"))
+# Runs 'R CMD build' + 'R CMD check' (typically tens of seconds).
+# Intermediate files go under tempdir(), so nothing is written to the
+# caller's working directory. Wrapped in if(interactive()) so the
+# example is shown to users but not executed during R CMD check.
+\donttest{
+if (interactive()) {
+  check()
+  check(error_on = "error")
+  check(args = c("--as-cran", "--no-manual"))
+}
 }
 }

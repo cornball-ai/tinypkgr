@@ -1,3 +1,4 @@
 ^\.github$
+^\.claude$
 ^CLAUDE\.md$
 ^cran-comments\.md$

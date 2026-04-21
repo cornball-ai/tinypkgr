@@ -10,18 +10,37 @@ NULL
 #' Builds a source package tarball suitable for CRAN submission.
 #'
 #' @param path Path to package root directory.
-#' @param dest_dir Directory to place the tarball. Default is current directory.
+#' @param dest_dir Directory to place the tarball. Defaults to
+#'   `tempdir()` so calls with no arguments never write to the user's
+#'   working directory. Pass an explicit path (e.g. `"."`) to keep the
+#'   tarball around.
 #'
 #' @return Path to the built tarball (invisibly).
 #'
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' build()
-#' build(dest_dir = tempdir())
-#' }
-build <- function(path = ".", dest_dir = ".") {
+#' # Scaffold a throwaway package in tempdir() and build a source tarball.
+#' pkg <- file.path(tempdir(), "buildpkg")
+#' dir.create(file.path(pkg, "R"), recursive = TRUE, showWarnings = FALSE)
+#' writeLines(c(
+#'   "Package: buildpkg",
+#'   "Title: Example",
+#'   "Version: 0.0.1",
+#'   "Authors@R: person('A', 'B', email = 'a@b.com', role = c('aut','cre'))",
+#'   "Description: Example.",
+#'   "License: GPL-3"
+#' ), file.path(pkg, "DESCRIPTION"))
+#' writeLines("add <- function(x, y) x + y", file.path(pkg, "R", "add.R"))
+#'
+#' out <- file.path(tempdir(), "tarballs")
+#' dir.create(out, showWarnings = FALSE)
+#' tarball <- build(pkg, dest_dir = out)
+#' file.exists(tarball)
+#'
+#' unlink(pkg, recursive = TRUE)
+#' unlink(out, recursive = TRUE)
+build <- function(path = ".", dest_dir = tempdir()) {
     path <- normalizePath(path, mustWork = TRUE)
     dest_dir <- normalizePath(dest_dir, mustWork = TRUE)
 
@@ -40,7 +59,8 @@ build <- function(path = ".", dest_dir = ".") {
     on.exit(setwd(old_wd), add = TRUE)
     setwd(dest_dir)
 
-    cmd <- paste("R CMD build", shQuote(path))
+    r_bin <- shQuote(file.path(R.home("bin"), "R"))
+    cmd <- paste(r_bin, "CMD build", shQuote(path))
     result <- system(cmd)
 
     if (result != 0) {
@@ -68,9 +88,22 @@ build <- function(path = ".", dest_dir = ".") {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' maintainer()
-#' }
+#' # Scaffold a throwaway package in tempdir() and read its maintainer.
+#' pkg <- file.path(tempdir(), "mxpkg")
+#' dir.create(pkg, showWarnings = FALSE)
+#' writeLines(c(
+#'   "Package: mxpkg",
+#'   "Title: Example",
+#'   "Version: 0.0.1",
+#'   "Authors@R: person('Jane', 'Doe', email = 'jane@example.com',",
+#'   "                  role = c('aut','cre'))",
+#'   "Description: Example.",
+#'   "License: GPL-3"
+#' ), file.path(pkg, "DESCRIPTION"))
+#'
+#' maintainer(pkg)
+#'
+#' unlink(pkg, recursive = TRUE)
 maintainer <- function(path = ".") {
     desc_file <- file.path(path, "DESCRIPTION")
     if (!file.exists(desc_file)) {
@@ -131,9 +164,14 @@ maintainer <- function(path = ".") {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' check_win_devel()
-#' check_win_devel(r_version = "release")
+#' # Uploads a tarball to the public 'win-builder' FTP server. Wrapped
+#' # in if(interactive()) so CRAN's automated checks never touch the
+#' # network.
+#' \donttest{
+#' if (interactive()) {
+#'   check_win_devel()
+#'   check_win_devel(r_version = "release")
+#' }
 #' }
 check_win_devel <- function(path = ".",
                             r_version = c("devel", "release", "oldrelease")) {
@@ -185,8 +223,13 @@ check_win_devel <- function(path = ".",
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' submit_cran()
+#' # Uploads to CRAN and prompts interactively for confirmation.
+#' # Wrapped in if(interactive()) so CRAN's automated checks never
+#' # attempt the upload.
+#' \donttest{
+#' if (interactive()) {
+#'   submit_cran()
+#' }
 #' }
 submit_cran <- function(path = ".", comments = "cran-comments.md") {
     path <- normalizePath(path, mustWork = TRUE)

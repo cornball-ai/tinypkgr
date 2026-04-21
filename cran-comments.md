@@ -4,11 +4,24 @@
 
 * This is a new submission.
 
-## Resubmission
+## Resubmission 0.2.1
 
-Version 0.1.0 was previously rejected because `Suggests: tinyrox` referred to a
-package not yet on CRAN. `tinyrox` is now on CRAN, and all Suggests packages
-(`tinyrox`, `tinytest`) resolve against mainstream repositories.
+Addressing reviewer feedback on 0.2.0:
+
+* Added reference URLs ('Writing R Extensions', CRAN Repository Policy) to the
+  Description field, formatted as requested (no space after 'https:', angle
+  brackets for auto-linking).
+* Rewrote most examples to be executable: each function's example now scaffolds
+  a minimal throwaway package under `tempdir()` and exercises the function
+  against it, so `R CMD check` runs the code. The remaining `\donttest{}`
+  examples (for `install()`, `reload()`, `check()`, `check_win_devel()`,
+  `submit_cran()`) are guarded with `if (interactive())` because they mutate
+  the user's R library, require network access, or prompt for input; each
+  example comment explains why it cannot run in an automated check.
+* Removed default paths from writing functions. `use_version()` and
+  `use_github_action()` now error if `path` is not supplied, so a no-argument
+  call can never write into `getwd()`. `build()`'s `dest_dir` defaults to
+  `tempdir()` instead of the working directory.
 
 ## Test environments
 
@@ -17,4 +30,4 @@ package not yet on CRAN. `tinyrox` is now on CRAN, and all Suggests packages
 
 ## Downstream dependencies
 
-None (new package).
+None on CRAN yet.

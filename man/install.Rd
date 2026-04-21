@@ -17,8 +17,13 @@ TRUE if successful, FALSE otherwise (invisibly).
 Wrapper around R CMD INSTALL with quiet mode option.
 }
 \examples{
-\dontrun{
-install()
-install(quiet = FALSE)  # Show full output
+# Calls 'R CMD INSTALL', which writes to the user's R library.
+# Wrapped in if(interactive()) so CRAN's automated checks never
+# mutate the library.
+\donttest{
+if (interactive()) {
+  install()
+  install(quiet = FALSE)
+}
 }
 }
