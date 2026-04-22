@@ -3,15 +3,16 @@
 \alias{build}
 \title{Build Package Tarball}
 \usage{
-build(path = ".", dest_dir = tempdir())
+build(path = ".", dest_dir = tools::R_user_dir("tinypkgr", "cache"))
 }
 \arguments{
 \item{path}{Path to package root directory.}
 
-\item{dest_dir}{Directory to place the tarball. Defaults to
-`tempdir()` so calls with no arguments never write to the user's
-working directory. Pass an explicit path (e.g. `"."`) to keep the
-tarball around.}
+\item{dest_dir}{Directory to place the tarball. Defaults to the
+per-package user cache dir (`tools::R_user_dir("tinypkgr",
+"cache")`), which is CRAN's recommended location for
+package-owned output and persists across sessions. Pass an
+explicit path to place the tarball somewhere else.}
 }
 \value{
 Path to the built tarball (invisibly).

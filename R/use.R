@@ -7,8 +7,9 @@
 #'   "minor" (0.2.0 -> 0.3.0), "major" (0.2.0 -> 1.0.0), or
 #'   "dev" (0.2.0 -> 0.2.0.1, or 0.2.0.1 -> 0.2.0.2).
 #' @param path Path to package root directory. Required; no default is
-#'   provided so the caller never accidentally rewrites files in
-#'   `getwd()`.
+#'   provided because this function edits files in `path`, and CRAN
+#'   Repository Policy forbids defaulting write paths to the user's
+#'   home filespace (which includes `getwd()`).
 #'
 #' @return The new version string (invisibly).
 #'
@@ -76,8 +77,9 @@ use_version <- function(which = c("patch", "minor", "major", "dev"),
 #' to `.Rbuildignore` if not already present.
 #'
 #' @param path Path to package root directory. Required; no default is
-#'   provided so the caller never accidentally writes files into
-#'   `getwd()`.
+#'   provided because this function writes files under `path`, and CRAN
+#'   Repository Policy forbids defaulting write paths to the user's
+#'   home filespace (which includes `getwd()`).
 #'
 #' @return Path to the created YAML file (invisibly).
 #'

@@ -10,10 +10,11 @@ NULL
 #' Builds a source package tarball suitable for CRAN submission.
 #'
 #' @param path Path to package root directory.
-#' @param dest_dir Directory to place the tarball. Defaults to
-#'   `tempdir()` so calls with no arguments never write to the user's
-#'   working directory. Pass an explicit path (e.g. `"."`) to keep the
-#'   tarball around.
+#' @param dest_dir Directory to place the tarball. Defaults to the
+#'   per-package user cache dir (`tools::R_user_dir("tinypkgr",
+#'   "cache")`), which is CRAN's recommended location for
+#'   package-owned output and persists across sessions. Pass an
+#'   explicit path to place the tarball somewhere else.
 #'
 #' @return Path to the built tarball (invisibly).
 #'
@@ -40,8 +41,10 @@ NULL
 #'
 #' unlink(pkg, recursive = TRUE)
 #' unlink(out, recursive = TRUE)
-build <- function(path = ".", dest_dir = tempdir()) {
+build <- function(path = ".",
+                  dest_dir = tools::R_user_dir("tinypkgr", "cache")) {
     path <- normalizePath(path, mustWork = TRUE)
+    dir.create(dest_dir, recursive = TRUE, showWarnings = FALSE)
     dest_dir <- normalizePath(dest_dir, mustWork = TRUE)
 
     desc_file <- file.path(path, "DESCRIPTION")

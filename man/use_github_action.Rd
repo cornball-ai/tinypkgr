@@ -7,8 +7,9 @@ use_github_action(path)
 }
 \arguments{
 \item{path}{Path to package root directory. Required; no default is
-provided so the caller never accidentally writes files into
-`getwd()`.}
+provided because this function writes files under `path`, and CRAN
+Repository Policy forbids defaulting write paths to the user's
+home filespace (which includes `getwd()`).}
 }
 \value{
 Path to the created YAML file (invisibly).

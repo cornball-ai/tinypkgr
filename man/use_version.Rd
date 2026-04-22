@@ -11,8 +11,9 @@ use_version(which = c("patch", "minor", "major", "dev"), path)
 "dev" (0.2.0 -> 0.2.0.1, or 0.2.0.1 -> 0.2.0.2).}
 
 \item{path}{Path to package root directory. Required; no default is
-provided so the caller never accidentally rewrites files in
-`getwd()`.}
+provided because this function edits files in `path`, and CRAN
+Repository Policy forbids defaulting write paths to the user's
+home filespace (which includes `getwd()`).}
 }
 \value{
 The new version string (invisibly).
