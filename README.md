@@ -9,7 +9,7 @@ tinypkgr provides lightweight wrappers around R CMD INSTALL, R CMD check, and CR
 ## Installation
 
 ```r
-remotes::install_github("cornball-ai/tinypkgr")
+install.packages("tinypkgr")
 ```
 
 ## Usage
