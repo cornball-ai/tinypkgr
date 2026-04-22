@@ -18,7 +18,12 @@ Uploads package to CRAN for review. You will receive a confirmation email
 that must be clicked to complete the submission.
 }
 \examples{
-\dontrun{
-submit_cran()
+# Uploads to CRAN and prompts interactively for confirmation.
+# Wrapped in if(interactive()) so CRAN's automated checks never
+# attempt the upload.
+\donttest{
+if (interactive()) {
+  submit_cran()
+}
 }
 }

@@ -19,8 +19,13 @@ Uploads package to win-builder.r-project.org for testing on Windows.
 Results are emailed to the package maintainer.
 }
 \examples{
-\dontrun{
-check_win_devel()
-check_win_devel(r_version = "release")
+# Uploads a tarball to the public 'win-builder' FTP server. Wrapped
+# in if(interactive()) so CRAN's automated checks never touch the
+# network.
+\donttest{
+if (interactive()) {
+  check_win_devel()
+  check_win_devel(r_version = "release")
+}
 }
 }

@@ -6,19 +6,37 @@
 #' @param which Which component to bump: "patch" (0.2.0 -> 0.2.1),
 #'   "minor" (0.2.0 -> 0.3.0), "major" (0.2.0 -> 1.0.0), or
 #'   "dev" (0.2.0 -> 0.2.0.1, or 0.2.0.1 -> 0.2.0.2).
-#' @param path Path to package root directory.
+#' @param path Path to package root directory. Required; no default is
+#'   provided because this function edits files in `path`, and CRAN
+#'   Repository Policy forbids defaulting write paths to the user's
+#'   home filespace (which includes `getwd()`).
 #'
 #' @return The new version string (invisibly).
 #'
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' use_version("patch")
-#' use_version("dev")
-#' }
+#' # Scaffold a throwaway package in tempdir() and bump its version.
+#' pkg <- file.path(tempdir(), "vxpkg")
+#' dir.create(pkg, showWarnings = FALSE)
+#' writeLines(c(
+#'   "Package: vxpkg",
+#'   "Title: Example",
+#'   "Version: 0.1.0",
+#'   "Authors@R: person('A', 'B', email = 'a@b.com', role = c('aut','cre'))",
+#'   "Description: Example.",
+#'   "License: GPL-3"
+#' ), file.path(pkg, "DESCRIPTION"))
+#'
+#' use_version("patch", path = pkg)
+#' read.dcf(file.path(pkg, "DESCRIPTION"))[1, "Version"]
+#'
+#' unlink(pkg, recursive = TRUE)
 use_version <- function(which = c("patch", "minor", "major", "dev"),
-                        path = ".") {
+                        path) {
+    if (missing(path)) {
+        stop("'path' is required and has no default.", call. = FALSE)
+    }
     which <- match.arg(which)
     path <- normalizePath(path, mustWork = TRUE)
     desc_file <- file.path(path, "DESCRIPTION")
@@ -58,17 +76,36 @@ use_version <- function(which = c("patch", "minor", "major", "dev"),
 #' macOS, via `eddelbuettel/github-actions/r-ci@master`). Adds `^\.github$`
 #' to `.Rbuildignore` if not already present.
 #'
-#' @param path Path to package root directory.
+#' @param path Path to package root directory. Required; no default is
+#'   provided because this function writes files under `path`, and CRAN
+#'   Repository Policy forbids defaulting write paths to the user's
+#'   home filespace (which includes `getwd()`).
 #'
 #' @return Path to the created YAML file (invisibly).
 #'
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' use_github_action()
-#' }
-use_github_action <- function(path = ".") {
+#' # Scaffold a throwaway package in tempdir() and add the workflow.
+#' pkg <- file.path(tempdir(), "ghapkg_example")
+#' dir.create(pkg, showWarnings = FALSE)
+#' writeLines(c(
+#'   "Package: ghapkg",
+#'   "Title: Example",
+#'   "Version: 0.0.1",
+#'   "Authors@R: person('A', 'B', email = 'a@b.com', role = c('aut','cre'))",
+#'   "Description: Example.",
+#'   "License: GPL-3"
+#' ), file.path(pkg, "DESCRIPTION"))
+#'
+#' yaml <- use_github_action(path = pkg)
+#' file.exists(yaml)
+#'
+#' unlink(pkg, recursive = TRUE)
+use_github_action <- function(path) {
+    if (missing(path)) {
+        stop("'path' is required and has no default.", call. = FALSE)
+    }
     path <- normalizePath(path, mustWork = TRUE)
     workflows_dir <- file.path(path, ".github", "workflows")
     dir.create(workflows_dir, recursive = TRUE, showWarnings = FALSE)

@@ -3,10 +3,13 @@
 \alias{use_github_action}
 \title{Add a GitHub Actions CI Workflow}
 \usage{
-use_github_action(path = ".")
+use_github_action(path)
 }
 \arguments{
-\item{path}{Path to package root directory.}
+\item{path}{Path to package root directory. Required; no default is
+provided because this function writes files under `path`, and CRAN
+Repository Policy forbids defaulting write paths to the user's
+home filespace (which includes `getwd()`).}
 }
 \value{
 Path to the created YAML file (invisibly).
@@ -17,7 +20,20 @@ macOS, via `eddelbuettel/github-actions/r-ci@master`). Adds `^\.github$`
 to `.Rbuildignore` if not already present.
 }
 \examples{
-\dontrun{
-use_github_action()
-}
+# Scaffold a throwaway package in tempdir() and add the workflow.
+pkg <- file.path(tempdir(), "ghapkg_example")
+dir.create(pkg, showWarnings = FALSE)
+writeLines(c(
+  "Package: ghapkg",
+  "Title: Example",
+  "Version: 0.0.1",
+  "Authors@R: person('A', 'B', email = 'a@b.com', role = c('aut','cre'))",
+  "Description: Example.",
+  "License: GPL-3"
+), file.path(pkg, "DESCRIPTION"))
+
+yaml <- use_github_action(path = pkg)
+file.exists(yaml)
+
+unlink(pkg, recursive = TRUE)
 }

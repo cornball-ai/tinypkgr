@@ -14,10 +14,16 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' check()
-#' check(error_on = "error")  # Only fail on errors, not warnings
-#' check(args = c("--as-cran", "--no-manual"))
+#' # Runs 'R CMD build' + 'R CMD check' (typically tens of seconds).
+#' # Intermediate files go under tempdir(), so nothing is written to the
+#' # caller's working directory. Wrapped in if(interactive()) so the
+#' # example is shown to users but not executed during R CMD check.
+#' \donttest{
+#' if (interactive()) {
+#'   check()
+#'   check(error_on = "error")
+#'   check(args = c("--as-cran", "--no-manual"))
+#' }
 #' }
 check <- function(path = ".", args = c("--as-cran", "--no-manual"),
                   error_on = c("warning", "error", "note")) {
@@ -43,7 +49,8 @@ check <- function(path = ".", args = c("--as-cran", "--no-manual"),
 
     # Build the package
     message("Building ", pkg_name, "...")
-    build_cmd <- paste("R CMD build", shQuote(path))
+    r_bin <- shQuote(file.path(R.home("bin"), "R"))
+    build_cmd <- paste(r_bin, "CMD build", shQuote(path))
     old_wd <- setwd(tmp_dir)
     on.exit(setwd(old_wd), add = TRUE)
 
@@ -63,7 +70,7 @@ check <- function(path = ".", args = c("--as-cran", "--no-manual"),
 
     # Run R CMD check
     message("Checking ", pkg_name, "...")
-    check_cmd <- paste("R CMD check", paste(args, collapse = " "),
+    check_cmd <- paste(r_bin, "CMD check", paste(args, collapse = " "),
                        shQuote(tarball))
     check_result <- system(check_cmd)
 
@@ -115,9 +122,14 @@ check <- function(path = ".", args = c("--as-cran", "--no-manual"),
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' install()
-#' install(quiet = FALSE)  # Show full output
+#' # Calls 'R CMD INSTALL', which writes to the user's R library.
+#' # Wrapped in if(interactive()) so CRAN's automated checks never
+#' # mutate the library.
+#' \donttest{
+#' if (interactive()) {
+#'   install()
+#'   install(quiet = FALSE)
+#' }
 #' }
 install <- function(path = ".", quiet = TRUE) {
     # Get absolute path
@@ -133,7 +145,8 @@ install <- function(path = ".", quiet = TRUE) {
     pkg_name <- desc[1, "Package"]
 
     # Build command
-    cmd <- paste("R CMD INSTALL", shQuote(path))
+    r_bin <- shQuote(file.path(R.home("bin"), "R"))
+    cmd <- paste(r_bin, "CMD INSTALL", shQuote(path))
 
     # Run install (redirect output if quiet)
     if (quiet) {
@@ -177,13 +190,23 @@ install <- function(path = ".", quiet = TRUE) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' e <- load_all()
-#' e$my_function(123)
+#' # Scaffold a throwaway package in tempdir() and source its R/ files.
+#' pkg <- file.path(tempdir(), "loadpkg")
+#' dir.create(file.path(pkg, "R"), recursive = TRUE, showWarnings = FALSE)
+#' writeLines(c(
+#'   "Package: loadpkg",
+#'   "Title: Example",
+#'   "Version: 0.0.1",
+#'   "Authors@R: person('A', 'B', email = 'a@b.com', role = c('aut','cre'))",
+#'   "Description: Example.",
+#'   "License: GPL-3"
+#' ), file.path(pkg, "DESCRIPTION"))
+#' writeLines("add <- function(x, y) x + y", file.path(pkg, "R", "add.R"))
 #'
-#' # Or attach to the search path explicitly:
-#' attach(load_all(), name = "tinypkgr:mypkg")
-#' }
+#' e <- load_all(pkg)
+#' e$add(2, 3)
+#'
+#' unlink(pkg, recursive = TRUE)
 load_all <- function(path = ".", env = new.env(parent = globalenv()),
                      quiet = TRUE) {
     r_dir <- file.path(path, "R")
@@ -225,9 +248,13 @@ load_all <- function(path = ".", env = new.env(parent = globalenv()),
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' reload()  # Reinstall and reload current package
-#' reload(document = TRUE)  # Document first (requires tinyrox)
+#' # Calls install() under the hood, which writes to the user's R
+#' # library. Wrapped in if(interactive()) so checks never mutate it.
+#' \donttest{
+#' if (interactive()) {
+#'   reload()
+#'   reload(document = TRUE)
+#' }
 #' }
 reload <- function(path = ".", document = FALSE, quiet = TRUE) {
     # Get package name from DESCRIPTION

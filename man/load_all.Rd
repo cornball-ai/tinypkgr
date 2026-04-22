@@ -24,13 +24,23 @@ Sources all R files in a package for interactive development,
 without requiring a full install.
 }
 \examples{
-\dontrun{
-e <- load_all()
-e$my_function(123)
+# Scaffold a throwaway package in tempdir() and source its R/ files.
+pkg <- file.path(tempdir(), "loadpkg")
+dir.create(file.path(pkg, "R"), recursive = TRUE, showWarnings = FALSE)
+writeLines(c(
+  "Package: loadpkg",
+  "Title: Example",
+  "Version: 0.0.1",
+  "Authors@R: person('A', 'B', email = 'a@b.com', role = c('aut','cre'))",
+  "Description: Example.",
+  "License: GPL-3"
+), file.path(pkg, "DESCRIPTION"))
+writeLines("add <- function(x, y) x + y", file.path(pkg, "R", "add.R"))
 
-# Or attach to the search path explicitly:
-attach(load_all(), name = "tinypkgr:mypkg")
-}
+e <- load_all(pkg)
+e$add(2, 3)
+
+unlink(pkg, recursive = TRUE)
 }
 \seealso{
 \code{\link[pkgKitten]{kitten}} for scaffolding a new package.
