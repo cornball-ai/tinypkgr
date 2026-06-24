@@ -3,21 +3,22 @@
 \alias{load_all}
 \title{Load All Package Code}
 \usage{
-load_all(path = ".", attach = TRUE, env = new.env(parent = globalenv()),
-         quiet = TRUE)
+load_all(path = ".", env = new.env(parent = globalenv()), quiet = TRUE,
+         attach = TRUE)
 }
 \arguments{
 \item{path}{Path to package root directory.}
-
-\item{attach}{Logical. Attach the sourced environment to the search path as
-\code{package:<name>} so its functions are callable directly? Default
-TRUE. A previous attachment of the same package is replaced. Set FALSE to
-only return the environment without touching the search path.}
 
 \item{env}{Environment to source files into. Defaults to a fresh
 environment whose parent is the global environment.}
 
 \item{quiet}{Logical. Suppress file sourcing messages? Default TRUE.}
+
+\item{attach}{Logical. Attach the sourced environment to the search path as
+\code{package:<name>} so its functions are callable directly? Default
+TRUE. A previous attachment of the same package is replaced. Set FALSE to
+only return the environment without touching the search path. Kept last in
+the argument list so positional calls from earlier versions still work.}
 }
 \value{
 The environment into which files were sourced (invisibly).
