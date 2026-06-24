@@ -119,10 +119,8 @@ maintainer <- function(path = ".") {
     if ("Authors@R" %in% colnames(desc)) {
         authors_r <- desc[1, "Authors@R"]
         # Parse the R expression
-        authors <- tryCatch(
-                            eval(parse(text = authors_r)),
-                            error = function(e) NULL
-        )
+        authors <- tryCatch(eval(parse(text = authors_r)),
+                            error = function(e) NULL)
 
         if (!is.null(authors)) {
             # Find the maintainer (cre role)
@@ -192,11 +190,8 @@ check_win_devel <- function(path = ".",
     message("Results will be emailed to: ", maint$email)
 
     # FTP URL based on R version
-    ftp_dir <- switch(r_version,
-                      "devel" = "R-devel",
-                      "release" = "R-release",
-                      "oldrelease" = "R-oldrelease"
-    )
+    ftp_dir <- switch(r_version, "devel" = "R-devel",
+                      "release" = "R-release", "oldrelease" = "R-oldrelease")
     ftp_url <- paste0("ftp://win-builder.r-project.org/", ftp_dir, "/")
 
     message("Uploading to win-builder (", r_version, ")...")
@@ -354,4 +349,3 @@ submit_cran <- function(path = ".", comments = "cran-comments.md") {
              call. = FALSE)
     }
 }
-
