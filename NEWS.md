@@ -1,3 +1,8 @@
+# tinypkgr 0.2.1.1
+
+* `load_all()` now attaches the sourced environment to the search path by default (`attach = TRUE`), like `devtools::load_all()`, so a package's functions are immediately callable after loading instead of being stranded in an unattached environment (#7). Pass `attach = FALSE` for the previous return-only behaviour. Help pages still require a real `install()`.
+* New `document()`: a thin wrapper around `tinyrox::document()` for generating Rd files and `NAMESPACE` from roxygen-style comments, a lightweight `devtools::document()` equivalent (#6). tinyrox stays an optional (Suggests) dependency; `document()` errors with an install hint if it is absent.
+
 # tinypkgr 0.2.1
 
 * Addressed CRAN resubmission feedback:
