@@ -46,6 +46,15 @@ e3 <- tinypkgr::load_all(tmp_pkg, attach = FALSE, env = target, quiet = TRUE)
 expect_identical(e3, target)
 expect_true("add" %in% ls(target))
 
+# Positional regression: the 2nd positional argument must bind to env, not
+# attach, so a pre-0.2.2 call load_all(path, env) keeps working instead of
+# erroring ("argument is of length zero"). attach stays last in the signature.
+target_pos <- new.env()
+e_pos <- tinypkgr::load_all(tmp_pkg, target_pos)
+expect_identical(e_pos, target_pos)
+expect_true("add" %in% ls(target_pos))
+if ("package:testpkg" %in% search()) detach("package:testpkg", character.only = TRUE)
+
 # document() generates Rd + NAMESPACE via tinyrox when it is installed
 if (requireNamespace("tinyrox", quietly = TRUE)) {
   writeLines(c(

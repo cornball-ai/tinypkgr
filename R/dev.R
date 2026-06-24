@@ -179,13 +179,14 @@ install <- function(path = ".", quiet = TRUE) {
 #' use \code{install()} or \code{reload()} if you need \code{?topic} docs.
 #'
 #' @param path Path to package root directory.
-#' @param attach Logical. Attach the sourced environment to the search path as
-#'   \code{package:<name>} so its functions are callable directly? Default
-#'   TRUE. A previous attachment of the same package is replaced. Set FALSE to
-#'   only return the environment without touching the search path.
 #' @param env Environment to source files into. Defaults to a fresh
 #'   environment whose parent is the global environment.
 #' @param quiet Logical. Suppress file sourcing messages? Default TRUE.
+#' @param attach Logical. Attach the sourced environment to the search path as
+#'   \code{package:<name>} so its functions are callable directly? Default
+#'   TRUE. A previous attachment of the same package is replaced. Set FALSE to
+#'   only return the environment without touching the search path. Kept last in
+#'   the argument list so positional calls from earlier versions still work.
 #'
 #' @return The environment into which files were sourced (invisibly).
 #'
@@ -212,8 +213,8 @@ install <- function(path = ".", quiet = TRUE) {
 #' e$add(2, 3)
 #'
 #' unlink(pkg, recursive = TRUE)
-load_all <- function(path = ".", attach = TRUE,
-                     env = new.env(parent = globalenv()), quiet = TRUE) {
+load_all <- function(path = ".", env = new.env(parent = globalenv()),
+                     quiet = TRUE, attach = TRUE) {
     r_dir <- file.path(path, "R")
 
     if (!dir.exists(r_dir)) {
