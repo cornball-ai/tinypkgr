@@ -172,18 +172,22 @@ install <- function(path = ".", quiet = TRUE) {
 
 #' Load All Package Code
 #'
-#' Sources all R files in a package for interactive development,
-#' without requiring a full install.
+#' Sources all R files in a package for interactive development, without a
+#' full install. By default the sourced environment is attached to the search
+#' path (like \code{devtools::load_all()}), so the package's functions are
+#' immediately callable in the session. Help pages are not available this way;
+#' use \code{install()} or \code{reload()} if you need \code{?topic} docs.
 #'
 #' @param path Path to package root directory.
+#' @param attach Logical. Attach the sourced environment to the search path as
+#'   \code{package:<name>} so its functions are callable directly? Default
+#'   TRUE. A previous attachment of the same package is replaced. Set FALSE to
+#'   only return the environment without touching the search path.
 #' @param env Environment to source files into. Defaults to a fresh
 #'   environment whose parent is the global environment.
 #' @param quiet Logical. Suppress file sourcing messages? Default TRUE.
 #'
 #' @return The environment into which files were sourced (invisibly).
-#'   Does not modify the search path. If you want search-path behavior,
-#'   call `attach()` yourself:
-#'   \preformatted{attach(tinypkgr::load_all(), name = "tinypkgr:mypkg")}
 #'
 #' @seealso \code{\link[pkgKitten]{kitten}} for scaffolding a new package.
 #'
@@ -203,12 +207,13 @@ install <- function(path = ".", quiet = TRUE) {
 #' ), file.path(pkg, "DESCRIPTION"))
 #' writeLines("add <- function(x, y) x + y", file.path(pkg, "R", "add.R"))
 #'
-#' e <- load_all(pkg)
+#' # attach = FALSE returns the environment without touching the search path.
+#' e <- load_all(pkg, attach = FALSE)
 #' e$add(2, 3)
 #'
 #' unlink(pkg, recursive = TRUE)
-load_all <- function(path = ".", env = new.env(parent = globalenv()),
-                     quiet = TRUE) {
+load_all <- function(path = ".", attach = TRUE,
+                     env = new.env(parent = globalenv()), quiet = TRUE) {
     r_dir <- file.path(path, "R")
 
     if (!dir.exists(r_dir)) {
@@ -230,7 +235,54 @@ load_all <- function(path = ".", env = new.env(parent = globalenv()),
     }
 
     message("Loaded ", length(r_files), " file(s)")
+
+    if (attach) {
+        desc_file <- file.path(path, "DESCRIPTION")
+        pkg_name <- if (file.exists(desc_file)) {
+            read.dcf(desc_file)[1, "Package"]
+        } else {
+            basename(normalizePath(path))
+        }
+        search_name <- paste0("package:", pkg_name)
+        if (search_name %in% search()) {
+            detach(search_name, character.only = TRUE)
+        }
+        base::attach(env, name = search_name, warn.conflicts = FALSE)
+        message("Attached ", search_name,
+                " to the search path (no help pages; use install() for those)")
+    }
+
     invisible(env)
+}
+
+#' Document a Package
+#'
+#' Generates Rd files and \code{NAMESPACE} from roxygen-style comments using
+#' \pkg{tinyrox}, a lightweight equivalent of \code{devtools::document()}.
+#' tinyrox is an optional (Suggests) dependency; an informative error is
+#' raised if it is not installed.
+#'
+#' @param path Path to package root directory.
+#' @param ... Further arguments passed to \code{tinyrox::document()}.
+#'
+#' @return The result of \code{tinyrox::document()} (invisibly).
+#'
+#' @export
+#'
+#' @examples
+#' # Requires the 'tinyrox' package. Wrapped in if(interactive()) so CRAN's
+#' # automated checks do not depend on a Suggests package being present.
+#' \donttest{
+#' if (interactive() && requireNamespace("tinyrox", quietly = TRUE)) {
+#'   document()
+#' }
+#' }
+document <- function(path = ".", ...) {
+    if (!requireNamespace("tinyrox", quietly = TRUE)) {
+        stop("Package 'tinyrox' is required for document(). ",
+             "Install it with install.packages(\"tinyrox\").", call. = FALSE)
+    }
+    invisible(tinyrox::document(path, ...))
 }
 
 #' Reload an Installed Package
@@ -314,4 +366,3 @@ reload <- function(path = ".", document = FALSE, quiet = TRUE) {
 
     invisible(success)
 }
-

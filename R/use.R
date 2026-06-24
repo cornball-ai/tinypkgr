@@ -32,8 +32,7 @@
 #' read.dcf(file.path(pkg, "DESCRIPTION"))[1, "Version"]
 #'
 #' unlink(pkg, recursive = TRUE)
-use_version <- function(which = c("patch", "minor", "major", "dev"),
-                        path) {
+use_version <- function(which = c("patch", "minor", "major", "dev"), path) {
     if (missing(path)) {
         stop("'path' is required and has no default.", call. = FALSE)
     }
@@ -114,38 +113,18 @@ use_github_action <- function(path) {
         stop("File already exists: ", yaml_file, call. = FALSE)
     }
 
-    yaml_lines <- c(
-                    "name: ci",
-                    "",
-                    "on:",
-                    "  push:",
-                    "  pull_request:",
-                    "",
-                    "env:",
-                    "  _R_CHECK_FORCE_SUGGESTS_: \"false\"",
-                    "",
-                    "jobs:",
-                    "  ci:",
-                    "    strategy:",
-                    "      matrix:",
-                    "        include:",
-                    "          - {os: macos-latest}",
-                    "          - {os: ubuntu-latest}",
-                    "",
-                    "    runs-on: ${{ matrix.os }}",
-                    "",
-                    "    steps:",
-                    "      - uses: actions/checkout@v6",
-                    "",
+    yaml_lines <- c("name: ci", "", "on:", "  push:", "  pull_request:",
+                    "", "env:", "  _R_CHECK_FORCE_SUGGESTS_: \"false\"", "",
+                    "jobs:", "  ci:", "    strategy:", "      matrix:",
+                    "        include:", "          - {os: macos-latest}",
+                    "          - {os: ubuntu-latest}", "",
+                    "    runs-on: ${{ matrix.os }}", "", "    steps:",
+                    "      - uses: actions/checkout@v6", "",
                     "      - name: Setup",
                     "        uses: eddelbuettel/github-actions/r-ci@master",
-                    "",
-                    "      - name: Dependencies",
-                    "        run: ./run.sh install_deps",
-                    "",
-                    "      - name: Test",
-                    "        run: ./run.sh run_tests"
-    )
+                    "", "      - name: Dependencies",
+                    "        run: ./run.sh install_deps", "",
+                    "      - name: Test", "        run: ./run.sh run_tests")
     writeLines(yaml_lines, yaml_file)
     message("Created ", yaml_file)
 
@@ -197,4 +176,3 @@ bump_version <- function(current, which) {
     }
     paste(parts, collapse = ".")
 }
-

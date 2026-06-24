@@ -3,10 +3,16 @@
 \alias{load_all}
 \title{Load All Package Code}
 \usage{
-load_all(path = ".", env = new.env(parent = globalenv()), quiet = TRUE)
+load_all(path = ".", attach = TRUE, env = new.env(parent = globalenv()),
+         quiet = TRUE)
 }
 \arguments{
 \item{path}{Path to package root directory.}
+
+\item{attach}{Logical. Attach the sourced environment to the search path as
+\code{package:<name>} so its functions are callable directly? Default
+TRUE. A previous attachment of the same package is replaced. Set FALSE to
+only return the environment without touching the search path.}
 
 \item{env}{Environment to source files into. Defaults to a fresh
 environment whose parent is the global environment.}
@@ -15,13 +21,13 @@ environment whose parent is the global environment.}
 }
 \value{
 The environment into which files were sourced (invisibly).
-  Does not modify the search path. If you want search-path behavior,
-  call `attach()` yourself:
-  \preformatted{attach(tinypkgr::load_all(), name = "tinypkgr:mypkg")}
 }
 \description{
-Sources all R files in a package for interactive development,
-without requiring a full install.
+Sources all R files in a package for interactive development, without a
+full install. By default the sourced environment is attached to the search
+path (like \code{devtools::load_all()}), so the package's functions are
+immediately callable in the session. Help pages are not available this way;
+use \code{install()} or \code{reload()} if you need \code{?topic} docs.
 }
 \examples{
 # Scaffold a throwaway package in tempdir() and source its R/ files.
@@ -37,7 +43,8 @@ writeLines(c(
 ), file.path(pkg, "DESCRIPTION"))
 writeLines("add <- function(x, y) x + y", file.path(pkg, "R", "add.R"))
 
-e <- load_all(pkg)
+# attach = FALSE returns the environment without touching the search path.
+e <- load_all(pkg, attach = FALSE)
 e$add(2, 3)
 
 unlink(pkg, recursive = TRUE)
